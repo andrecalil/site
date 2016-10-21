@@ -84,7 +84,7 @@ namespace DotNetFloripa.Data
             {
                 try
                 {
-                    Companies = RequestJsonAs<Company[]>("https://raw.githubusercontent.com/", "andrecalil/dotnetfloripa-content/master/companies.json");
+                    Companies = RequestJsonAs<Company[]>("https://raw.githubusercontent.com/", "dotnetfloripa/site-data/master/companies.json");
 
                     NextCompaniesLoad = DateTime.Now.Add(ReloadThreshold);
                 }
@@ -101,7 +101,7 @@ namespace DotNetFloripa.Data
             {
                 try
                 {
-                    Jobs = RequestJsonAs<Job[]>("https://raw.githubusercontent.com/", "andrecalil/dotnetfloripa-content/master/jobs.json");
+                    Jobs = RequestJsonAs<Job[]>("https://raw.githubusercontent.com/", "dotnetfloripa/site-data/master/jobs.json");
 
                     NextJobsLoad = DateTime.Now.Add(ReloadThreshold);
                 }
