@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
-using DotNetFloripa.ModelCore;
+﻿using DotNetFloripa.ModelCore;
 using DotNetFloripa.ModelCore.Interfaces;
+using System;
+using System.Linq;
 
 namespace DotNetFloripa.Data
 {
@@ -530,14 +530,16 @@ namespace DotNetFloripa.Data
             return Events.AsQueryable();
         }
 
-        public Event GetEventBySlug(string slug)
-        {
-            return Events.FirstOrDefault(e => e.Slug.Equals(slug, StringComparison.CurrentCultureIgnoreCase));
-        }
+        public Event GetEventBySlug(string slug) => Events.FirstOrDefault(e => e.Slug.Equals(slug, StringComparison.CurrentCultureIgnoreCase));
 
         public IQueryable<Company> GetCompanies()
         {
             return Companies.AsQueryable();
+        }
+
+        public IQueryable<Job> GetJobs()
+        {
+            throw new NotImplementedException();
         }
     }
 }

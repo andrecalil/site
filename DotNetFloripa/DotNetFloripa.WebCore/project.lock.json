@@ -1573,6 +1573,19 @@
           }
         }
       },
+      "Mini-Biggy/2.0.0": {
+        "type": "package",
+        "dependencies": {
+          "NETStandard.Library": "1.6.0",
+          "Newtonsoft.Json": "9.0.1"
+        },
+        "compile": {
+          "lib/netstandard1.6/Mini-Biggy.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.6/Mini-Biggy.dll": {}
+        }
+      },
       "NETStandard.Library/1.6.0": {
         "type": "package",
         "dependencies": {
@@ -3750,6 +3763,7 @@
         "framework": ".NETStandard,Version=v1.6",
         "dependencies": {
           "DotNetFloripa.ModelCore": "1.0.0",
+          "Mini-Biggy": "2.0.0",
           "NETStandard.Library": "1.6.0",
           "System.Linq.Queryable": "4.0.1"
         },
@@ -5057,6 +5071,16 @@
         "runtimes/win/lib/net46/Microsoft.Win32.Registry.dll",
         "runtimes/win/lib/netcore50/_._",
         "runtimes/win/lib/netstandard1.3/Microsoft.Win32.Registry.dll"
+      ]
+    },
+    "Mini-Biggy/2.0.0": {
+      "sha512": "8ICE8MbCMCw6Uw6ptIh2t7WW1igSmXoZn+pmTYavHeP0AO0wmSG6r69iOzK5UkG5Pg2dhpcKJzMuypuwYQZmsQ==",
+      "type": "package",
+      "path": "Mini-Biggy/2.0.0",
+      "files": [
+        "Mini-Biggy.2.0.0.nupkg.sha512",
+        "Mini-Biggy.nuspec",
+        "lib/netstandard1.6/Mini-Biggy.dll"
       ]
     },
     "NETStandard.Library/1.6.0": {
