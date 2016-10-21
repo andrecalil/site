@@ -29,20 +29,15 @@ namespace DotNetFloripa.Data
         {
             string result = string.Empty;
 
-            try
-            {
-                var httpClient = new HttpClient();
-                httpClient.BaseAddress = new Uri(baseURI);
-                httpClient.DefaultRequestHeaders.Accept.Clear();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var httpClient = new HttpClient();
+            httpClient.BaseAddress = new Uri(baseURI);
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                HttpResponseMessage response = httpClient.GetAsync(resourceURI).Result;
+            HttpResponseMessage response = httpClient.GetAsync(resourceURI).Result;
+            response.EnsureSuccessStatusCode();
 
-                if (response.IsSuccessStatusCode)
-                    result = response.Content.ReadAsStringAsync().Result;
-            }
-            catch (Exception)
-            { }
+            result = response.Content.ReadAsStringAsync().Result;
 
             if (string.IsNullOrEmpty(result))
                 return default(T);
@@ -83,7 +78,7 @@ namespace DotNetFloripa.Data
             }
         }
 
-        private void LoadCompanies ()
+        private void LoadCompanies()
         {
             if(ShouldLoadCompanies())
             {
