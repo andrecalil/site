@@ -1,9 +1,7 @@
 ﻿using DotNetFloripa.DataCore.DTO;
 using DotNetFloripa.ModelCore;
 using DotNetFloripa.ModelCore.Interfaces;
-using MiniBiggy;
-using MiniBiggy.SaveStrategies;
-using MiniBiggy.Serializers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +25,31 @@ namespace DotNetFloripa.Data
         private bool ShouldLoadCompanies() => Companies == null || Companies.Length == 0 || NextCompaniesLoad < DateTime.Now;
         private bool ShouldLoadJobs() => Jobs == null || Jobs.Length == 0 || NextJobsLoad < DateTime.Now;
 
+        private T RequestJsonAs<T>(string baseURI, string resourceURI)
+        {
+            string result = string.Empty;
+
+            try
+            {
+                var httpClient = new HttpClient();
+                httpClient.BaseAddress = new Uri(baseURI);
+                httpClient.DefaultRequestHeaders.Accept.Clear();
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                HttpResponseMessage response = httpClient.GetAsync(resourceURI).Result;
+
+                if (response.IsSuccessStatusCode)
+                    result = response.Content.ReadAsStringAsync().Result;
+            }
+            catch (Exception)
+            { }
+
+            if (string.IsNullOrEmpty(result))
+                return default(T);
+            else
+                return JsonConvert.DeserializeObject<T>(result);
+        }
+
         private void LoadMeetups()
         {
             if(ShouldLoadMeetups())
@@ -35,33 +58,20 @@ namespace DotNetFloripa.Data
 
                 try
                 {
-                    var httpClient = new HttpClient();
-                    httpClient.BaseAddress = new Uri("https://api.meetup.com/");
-                    httpClient.DefaultRequestHeaders.Accept.Clear();
-                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var meetupEvents = RequestJsonAs<MeetupEvent[]>("https://api.meetup.com/", "dotnetfloripa/events?page=15&status=past,upcoming");
 
-                    HttpResponseMessage response = httpClient.GetAsync("dotnetfloripa/events?page=15&status=past,upcoming").Result;
-
-                    if (response.IsSuccessStatusCode)
+                    foreach (var meetup in meetupEvents)
                     {
-                        string serializedEvents = response.Content.ReadAsStringAsync().Result;
-
-                        var jsonSerializer = new MiniBiggy.Serializers.JsonSerializer();
-                        var meetupEvents = jsonSerializer.Deserialize<MeetupEvent>(System.Text.Encoding.UTF8.GetBytes(serializedEvents));
-
-                        foreach (var meetup in meetupEvents)
+                        events.Add(new Event()
                         {
-                            events.Add(new Event()
-                            {
-                                Description = meetup.description,
-                                ExternalUrl = meetup.link,
-                                Title = meetup.name,
-                                ImageUrl = "http://i.imgur.com/2ls3CgF.png",
-                                Id = meetup.id,
-                                Start = meetup.StartTime(),
-                                End = meetup.EndTime()
-                            });
-                        }
+                            Description = meetup.description,
+                            ExternalUrl = meetup.link,
+                            Title = meetup.name,
+                            ImageUrl = "http://i.imgur.com/2ls3CgF.png",
+                            Id = meetup.id,
+                            Start = meetup.StartTime(),
+                            End = meetup.EndTime()
+                        });
                     }
 
                     NextMeetupsLoad = DateTime.Now.Add(ReloadThreshold);
@@ -79,8 +89,7 @@ namespace DotNetFloripa.Data
             {
                 try
                 {
-                    var companiesBiggy = new PersistentList<Company>(new GitHubDataStore("andrecalil/dotnetfloripa-content/master/companies.json"), new JsonSerializer(), new SaveOnlyWhenRequested());
-                    Companies = companiesBiggy.ToArray();
+                    Companies = RequestJsonAs<Company[]>("https://raw.githubusercontent.com/", "andrecalil/dotnetfloripa-content/master/companies.json");
 
                     NextCompaniesLoad = DateTime.Now.Add(ReloadThreshold);
                 }
@@ -97,8 +106,7 @@ namespace DotNetFloripa.Data
             {
                 try
                 {
-                    var jobsBiggy = new PersistentList<Job>(new GitHubDataStore("andrecalil/dotnetfloripa-content/master/jobs.json"), new JsonSerializer(), new SaveOnlyWhenRequested());
-                    Jobs = jobsBiggy.ToArray();
+                    Jobs = RequestJsonAs<Job[]>("https://raw.githubusercontent.com/", "andrecalil/dotnetfloripa-content/master/jobs.json");
 
                     NextJobsLoad = DateTime.Now.Add(ReloadThreshold);
                 }
