@@ -53,7 +53,7 @@ namespace DotNetFloripa.Data
 
                 try
                 {
-                    var meetupEvents = RequestJsonAs<MeetupEvent[]>("https://api.meetup.com/", "dotnetfloripa/events?page=15&status=past,upcoming");
+                    var meetupEvents = RequestJsonAs<MeetupEvent[]>("https://api.meetup.com/", "dotnetfloripa/events?page=15&status=past,upcoming&desc=true");
 
                     foreach (var meetup in meetupEvents)
                     {
